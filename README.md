@@ -65,11 +65,7 @@ public class PingCommandHandler : IRequestHandler<PingCommand, PongResponse>
 var response = await mediator.Send(new PingCommand("Ping!"));
 Console.WriteLine(response.Message); // Ping! => Pong!
 ```
-## Exemplo de Saída
-[Email] To: Bob - Bem-vindo!
-[Push] To: Bob - Bem-vindo!
-[SMS] To: Bob - Bem-vindo!
-Ping! => Pong!
+
 ## Licença
 
 MIT License. Veja o arquivo LICENSE.txt para mais detalhes.
