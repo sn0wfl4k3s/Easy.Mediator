@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Easy.Mediator
 {
-    public class Mediator : IMediator
+    internal class Mediator : IMediator
     {
         private readonly IServiceProvider _serviceProvider;
 
@@ -21,6 +23,20 @@ namespace Easy.Mediator
                 ?? throw new InvalidOperationException($"Handler for '{request.GetType().Name}' not found.");
 
             return (Task<TResult>)handlerType.GetMethod("Handle").Invoke(handler, new object[] { request, cancellationToken });
+        }
+
+        public async Task Publish<TNotification>(TNotification notification, CancellationToken cancellationToken = default) where TNotification : INotification
+        {
+            var handlerType = typeof(INotificationHandler<>).MakeGenericType(notification.GetType());
+
+            var handlers = (IEnumerable<object>)_serviceProvider.GetService(typeof(IEnumerable<>).MakeGenericType(handlerType));
+
+            if (handlers != null)
+            {
+                var tasks = handlers.Select(handler => (Task)handlerType.GetMethod("Handle").Invoke(handler, new object[] { notification, cancellationToken }));
+
+                await Task.WhenAll(tasks);
+            }
         }
     }
 }

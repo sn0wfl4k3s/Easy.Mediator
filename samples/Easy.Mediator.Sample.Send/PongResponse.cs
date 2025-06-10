@@ -1,3 +1,3 @@
-﻿namespace Easy.Mediator.Console.Send;
+﻿namespace Easy.Mediator.Sample.Send;
 
 public record PongResponse(string Message);

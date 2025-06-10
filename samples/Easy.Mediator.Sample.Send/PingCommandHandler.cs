@@ -1,4 +1,4 @@
-﻿namespace Easy.Mediator.Console.Send;
+﻿namespace Easy.Mediator.Sample.Send;
 
 public class PingCommandHandler : IRequestHandler<PingCommand, PongResponse>
 {

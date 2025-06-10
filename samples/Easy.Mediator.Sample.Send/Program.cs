@@ -1,5 +1,5 @@
 ﻿using Easy.Mediator;
-using Easy.Mediator.Console.Send;
+using Easy.Mediator.Sample.Send;
 using Microsoft.Extensions.DependencyInjection;
 
 var services = new ServiceCollection();

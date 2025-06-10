@@ -9,4 +9,8 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Easy.Mediator.Abstractions\Easy.Mediator.Abstractions.csproj" />
+  </ItemGroup>
+
 </Project>

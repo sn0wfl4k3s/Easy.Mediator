@@ -19,12 +19,16 @@ namespace Easy.Mediator
         {
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
-            var handlerInterfaceType = typeof(IRequestHandler<,>);
+            var requestHandlerInterfaceType = typeof(IRequestHandler<,>);
+
+            var notificationHandlerInterfaceType = typeof(INotificationHandler<>);
 
             var handlerTypes = assemblies.SelectMany(x => x.GetTypes()
                 .Where(t => !t.IsAbstract && !t.IsInterface)
                 .SelectMany(t => t.GetInterfaces()
-                    .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == handlerInterfaceType)
+                    .Where(i => i.IsGenericType && (
+                        i.GetGenericTypeDefinition() == requestHandlerInterfaceType ||
+                        i.GetGenericTypeDefinition() == notificationHandlerInterfaceType))
                     .Select(i => new { HandlerType = t, InterfaceType = i }))
                 .ToList());
 
