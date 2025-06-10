@@ -30,6 +30,7 @@ public class EmailNotificationHandler : INotificationHandler<NewUserNotification
     public Task Handle(NewUserNotification notification, CancellationToken cancellationToken = default)
     {
         Console.WriteLine($"[Email] To: {notification.UserName} - {notification.Message}");
+
         return Task.CompletedTask;
     }
 }
@@ -37,17 +38,22 @@ public class EmailNotificationHandler : INotificationHandler<NewUserNotification
 #### 3. Publique a Notification
 ```
 var services = new ServiceCollection();
+
 services.AddEasyMediator();
+
 var provider = services.BuildServiceProvider();
+
 var mediator = provider.GetRequiredService<IMediator>();
 
 await mediator.Publish(new NewUserNotification("Bob", "Bem-vindo!"));
+//[Email] To: Bob - Welcome to the system!
 ```
 ### Implementando Requests (Request/Response)
 
 #### 1. Defina um Request e um Response
 ```
 public record PingCommand(string Message) : IRequest<PongResponse>;
+
 public record PongResponse(string Message);
 ```
 #### 2. Implemente um RequestHandler
@@ -63,6 +69,7 @@ public class PingCommandHandler : IRequestHandler<PingCommand, PongResponse>
 #### 3. Envie o Request e obtenha o Response
 ```
 var response = await mediator.Send(new PingCommand("Ping!"));
+
 Console.WriteLine(response.Message); // Ping! => Pong!
 ```
 
