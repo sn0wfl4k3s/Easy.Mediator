@@ -31,5 +31,5 @@ jobs:
     - name: Publicando no Nuget
       uses: brandedoutcast/publish-nuget@v2.5.5
       with:
-        PROJECT_FILE_PATH: src/Easy.Mediator/Easy.Mediator.csproj
+        PROJECT_FILE_PATH: /src/Easy.Mediator/Easy.Mediator.csproj
         NUGET_KEY: ${{secrets.NUGET_API_KEY}}
