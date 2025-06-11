@@ -1,4 +1,4 @@
-﻿namespace Easy.Mediator.UnitTests;
+﻿namespace Easy.Mediator.UnitTests.Requests;
 
 public class PingCommandHandler : IRequestHandler<PingCommand, PongResponse>
 {

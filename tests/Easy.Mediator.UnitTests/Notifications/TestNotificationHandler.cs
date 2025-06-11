@@ -1,4 +1,4 @@
-﻿namespace Easy.Mediator.UnitTests;
+﻿namespace Easy.Mediator.UnitTests.Notifications;
 
 public class TestNotificationHandler : INotificationHandler<TestNotification>
 {

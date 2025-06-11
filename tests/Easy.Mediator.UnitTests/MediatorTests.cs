@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Easy.Mediator.UnitTests.Notifications;
+using Easy.Mediator.UnitTests.Requests;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Easy.Mediator.UnitTests;
 
@@ -36,6 +38,6 @@ public class MediatorTests
 
         await _mediator.Publish(notification);
 
-        Assert.True(TestNotificationHandler.WasCalled); 
+        Assert.True(TestNotificationHandler.WasCalled);
     }
 }
