@@ -1,0 +1,35 @@
+name: Easy.Mediator - Release
+
+on:
+  push:
+    branches: [ release ]
+
+jobs:
+  publish-nuget:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '9.0.x'
+    - name: Instalando as dependências
+      run: |
+        cd src/Easy.Mediator/
+        dotnet restore
+        
+    - name: Executando os Testes
+      run: |
+        cd src/Easy.Mediator/
+        dotnet test --nologo --verbosity normal
+    
+    - name: Buildando os pacotes
+      run: |
+        cd src/Easy.Mediator/
+        dotnet build --configuration Release --no-restore
+    
+    - name: Publicando no Nuget
+      uses: brandedoutcast/publish-nuget@v2.5.5
+      with:
+        PROJECT_FILE_PATH: src/Easy.Mediator/Easy.Mediator.csproj
+        NUGET_KEY: ${{secrets.NUGET_API_KEY}}
