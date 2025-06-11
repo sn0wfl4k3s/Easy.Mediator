@@ -15,6 +15,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Easy.Mediator.Sample.Send",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Easy.Mediator.Sample.Publish", "samples\Easy.Mediator.Sample.Publish\Easy.Mediator.Sample.Publish.csproj", "{AF986D80-E60D-E5F0-E5FF-F0FF576E1428}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{AA1FAED6-CEE1-44B2-BDB2-BA5422324D0B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Easy.Mediator.UnitTests", "tests\Easy.Mediator.UnitTests\Easy.Mediator.UnitTests.csproj", "{D11BAF2F-1687-447D-9FD0-B7B2C9B50035}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +41,10 @@ Global
 		{AF986D80-E60D-E5F0-E5FF-F0FF576E1428}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF986D80-E60D-E5F0-E5FF-F0FF576E1428}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF986D80-E60D-E5F0-E5FF-F0FF576E1428}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D11BAF2F-1687-447D-9FD0-B7B2C9B50035}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D11BAF2F-1687-447D-9FD0-B7B2C9B50035}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D11BAF2F-1687-447D-9FD0-B7B2C9B50035}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D11BAF2F-1687-447D-9FD0-B7B2C9B50035}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -46,6 +54,7 @@ Global
 		{5AD0666A-87BD-43BE-81C3-B47F1ABBA752} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{627233C1-27D4-0B22-6572-780F7E38FB08} = {5D15FA13-D60C-4A24-AB8B-13D1E690100E}
 		{AF986D80-E60D-E5F0-E5FF-F0FF576E1428} = {5D15FA13-D60C-4A24-AB8B-13D1E690100E}
+		{D11BAF2F-1687-447D-9FD0-B7B2C9B50035} = {AA1FAED6-CEE1-44B2-BDB2-BA5422324D0B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {66FA4BF0-30A2-4914-A497-12B5F36A8093}
