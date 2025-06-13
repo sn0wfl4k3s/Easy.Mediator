@@ -1,30 +1,39 @@
-# Easy.Mediator
+# 🚀 Easy.Mediator
 
-**Easy.Mediator** é uma biblioteca leve e extensível para implementar o padrão Mediator em aplicações .NET, facilitando a separação de responsabilidades e promovendo um código desacoplado.
+**Easy.Mediator** is a lightweight, extensible, and intuitive library for implementing the **Mediator pattern** in .NET applications. It helps you separate concerns, reduce coupling, and keep your code clean and testable.
 
-## Recursos
+---
 
-- Suporte a comandos (Request/Response) e notificações (Publish/Subscribe)
-- Registro automático de handlers via Dependency Injection
-- Compatível com .NET Standard 2.1 e .NET 9
-- Integração simples com Microsoft.Extensions.DependencyInjection
+## ✨ Features
 
-## Instalação
+- ✅ Supports **Requests/Responses** and **Notifications** (Publish/Subscribe)
+- ⚙️ Automatic handler registration via **Dependency Injection**
+- 🔄 Compatible with **.NET Standard 2.1** and **.NET 5+** or higher
+- 🔌 Seamless integration with `Microsoft.Extensions.DependencyInjection`
+- 📦 Production-ready and test-friendly
 
-Adicione a referência ao pacote em seu projeto:
-```
+---
+
+## 📦 Installation
+
+Install via the .NET CLI:
+
+```bash
 dotnet add package Easy.Mediator
 ```
-## Uso Básico
 
-### Implementando Notifications (Publish/Subscribe)
+## 🚀 Basic Usage
 
-#### 1. Defina uma Notification
-```
+### 🔔 Handling Notifications
+
+#### 1. Define a notification
+
+```csharp
 public record NewUserNotification(string UserName, string Message) : INotification;
+
 ```
-#### 2. Implemente um NotificationHandler
-```
+#### 2. Implement a notification handler
+```csharp
 public class EmailNotificationHandler : INotificationHandler<NewUserNotification>
 {
     public Task Handle(NewUserNotification notification, CancellationToken cancellationToken = default)
@@ -35,8 +44,8 @@ public class EmailNotificationHandler : INotificationHandler<NewUserNotification
     }
 }
 ```
-#### 3. Publique a Notification
-```
+#### 3. Publish the notification
+```csharp
 var services = new ServiceCollection();
 
 services.AddEasyMediator();
@@ -48,16 +57,16 @@ var mediator = provider.GetRequiredService<IMediator>();
 await mediator.Publish(new NewUserNotification("Bob", "Bem-vindo!"));
 //[Email] To: Bob - Welcome to the system!
 ```
-### Implementando Requests (Request/Response)
+### 📬 Handling Requests (Request/Response)
 
-#### 1. Defina um Request e um Response
-```
+#### 1. Define a request and its response
+```csharp
 public record PingCommand(string Message) : IRequest<PongResponse>;
 
 public record PongResponse(string Message);
 ```
-#### 2. Implemente um RequestHandler
-```
+#### 2. Implement a request handler
+```csharp
 public class PingCommandHandler : IRequestHandler<PingCommand, PongResponse>
 {
     public Task<PongResponse> Handle(PingCommand request, CancellationToken cancellationToken = default)
@@ -66,13 +75,17 @@ public class PingCommandHandler : IRequestHandler<PingCommand, PongResponse>
     }
 }
 ```
-#### 3. Envie o Request e obtenha o Response
-```
+#### 3. Send the request and receive the response
+```csharp
 var response = await mediator.Send(new PingCommand("Ping!"));
 
 Console.WriteLine(response.Message); // Ping! => Pong!
 ```
 
-## Licença
+## 📃 License
+This project is licensed under the MIT License.
 
-MIT License. Veja o arquivo LICENSE.txt para mais detalhes.
+You are free to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the software, provided that you include the original copyright
+and license notice.
+
+See the [License.txt](LICENSE.txt) file for full details.
