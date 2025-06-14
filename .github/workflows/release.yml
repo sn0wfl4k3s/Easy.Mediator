@@ -21,7 +21,7 @@ jobs:
     - name: Executando os Testes
       run: |
         cd src/Easy.Mediator/
-        dotnet test --nologo --verbosity normal
+        dotnet test --verbosity normal
     
     - name: Buildando os pacotes
       run: |
@@ -29,7 +29,8 @@ jobs:
         dotnet build --configuration Release --no-restore
     
     - name: Publicando no Nuget
-      uses: brandedoutcast/publish-nuget@v2.5.5
+      uses: brandedoutcast/publish-nuget@v2
       with:
-        PROJECT_FILE_PATH: /src/Easy.Mediator/Easy.Mediator.csproj
+        PROJECT_FILE_PATH: src/Easy.Mediator/Easy.Mediator.csproj
         NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+        BUILD_CONFIGURATION: Release
