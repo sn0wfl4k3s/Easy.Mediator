@@ -8,7 +8,7 @@
 
 - ✅ Supports **Requests/Responses** and **Notifications**
 - ⚙️ Automatic handler registration via **Dependency Injection**
-- 🔄 Compatible with **.NET Standard 2.1** and **.NET 5+** or higher
+- 🔄 Compatible with **.NET Standard 2.1**, **.NET CORE** and **.NET 5+** or higher
 - 🔌 Seamless integration with `Microsoft.Extensions.DependencyInjection`
 - 📦 use-friendly
 
