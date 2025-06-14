@@ -4,7 +4,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 var services = new ServiceCollection();
 
-services.AddEasyMediator();
+services.AddEasyMediator(options =>
+{
+    options.AddAssembliesFrom("Easy.Mediator.Sample.Publish");
+});
 
 var provider = services.BuildServiceProvider();
 

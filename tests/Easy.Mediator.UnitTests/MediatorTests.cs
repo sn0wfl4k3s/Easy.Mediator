@@ -39,5 +39,37 @@ public class MediatorTests
         await _mediator.Publish(notification);
 
         Assert.True(TestNotificationHandler.WasCalled);
+        Assert.Equal("notify", TestNotificationHandler.ReceivedContent);
+    }
+
+    [Theory]
+    [InlineData("ping", "ping => Pong!")]
+    [InlineData("hello", "hello => Pong!")]
+    [InlineData("", " => Pong!")]
+    public async Task Send_ShouldReturnExpectedResponse_Theory(string input, string expectedMessage)
+    {
+        var command = new PingCommand(input);
+
+        var response = await _mediator.Send(command);
+
+        Assert.NotNull(response);
+        Assert.Equal(expectedMessage, response.Message);
+    }
+
+    [Theory]
+    [InlineData("notify1")]
+    [InlineData("")]
+    [InlineData("another notification")]
+    public async Task Publish_ShouldTriggerNotificationHandler_Theory(string content)
+    {
+        // Reset static state before test
+        TestNotificationHandler.WasCalled = false;
+        TestNotificationHandler.ReceivedContent = null;
+
+        var notification = new TestNotification(content);
+        await _mediator.Publish(notification);
+
+        Assert.True(TestNotificationHandler.WasCalled);
+        Assert.Equal(content, TestNotificationHandler.ReceivedContent);
     }
 }
