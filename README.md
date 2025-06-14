@@ -6,11 +6,11 @@
 
 ## ✨ Features
 
-- ✅ Supports **Requests/Responses** and **Notifications** (Publish/Subscribe)
+- ✅ Supports **Requests/Responses** and **Notifications**
 - ⚙️ Automatic handler registration via **Dependency Injection**
 - 🔄 Compatible with **.NET Standard 2.1** and **.NET 5+** or higher
 - 🔌 Seamless integration with `Microsoft.Extensions.DependencyInjection`
-- 📦 Production-ready and test-friendly
+- 📦 use-friendly
 
 ---
 
