@@ -31,12 +31,12 @@ namespace Easy.Mediator
 
             var handlers = (IEnumerable<object>)_serviceProvider.GetService(typeof(IEnumerable<>).MakeGenericType(handlerType));
 
-            if (handlers != null)
-            {
-                var tasks = handlers.Select(handler => (Task)handlerType.GetMethod("Handle").Invoke(handler, new object[] { notification, cancellationToken }));
+            if (handlers == null || !handlers.Any())
+                return;
 
-                await Task.WhenAll(tasks);
-            }
+            var tasks = handlers.Select(handler => (Task)handlerType.GetMethod("Handle").Invoke(handler, new object[] { notification, cancellationToken }));
+
+            await Task.WhenAll(tasks);
         }
     }
 }

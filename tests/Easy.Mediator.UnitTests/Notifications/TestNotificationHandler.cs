@@ -2,8 +2,8 @@
 
 public class TestNotificationHandler : INotificationHandler<TestNotification>
 {
-    public static bool WasCalled { get; private set; } = false;
-    public string? ReceivedContent { get; private set; }
+    public static bool WasCalled { get; set; } = false;
+    public static string? ReceivedContent { get; set; }
     public Task Handle(TestNotification notification, CancellationToken cancellationToken = default)
     {
         WasCalled = true;
