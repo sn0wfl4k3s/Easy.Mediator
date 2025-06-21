@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -38,30 +39,28 @@ namespace Easy.Mediator
                     .Select(i => new { HandlerType = t, InterfaceType = i }))
                 .ToList();
 
-            foreach (var handler in handlerTypes)
+            switch (options.ServiceLifetime)
             {
-                switch (options.ServiceLifetime)
-                {
-                    case ServiceLifetime.Singleton:
-                        services.AddSingleton(handler.InterfaceType, handler.HandlerType);
-                        break;
-                    case ServiceLifetime.Scoped:
-                        services.AddScoped(handler.InterfaceType, handler.HandlerType);
-                        break;
-                    default:
+                case ServiceLifetime.Transient:
+                    foreach (var handler in handlerTypes)
                         services.AddTransient(handler.InterfaceType, handler.HandlerType);
-                        break;
-                }
+                    break;
+                case ServiceLifetime.Scoped:
+                    foreach (var handler in handlerTypes)
+                        services.AddScoped(handler.InterfaceType, handler.HandlerType);
+                    break;
+                default:
+                    foreach (var handler in handlerTypes)
+                        services.AddSingleton(handler.InterfaceType, handler.HandlerType);
+                    break;
             }
         }
 
-        private static Assembly[] GetAssemblies(MediatorConfigurationOptions options)
+        private static IEnumerable<Assembly> GetAssemblies(MediatorConfigurationOptions options)
         {
-            if (options.AssemblyNames != null && options.AssemblyNames.Any())
+            if (options.Assemblies != null && options.Assemblies.Any())
             {
-                return options.AssemblyNames
-                    .Select(assemblyName => AppDomain.CurrentDomain.Load(assemblyName))
-                    .ToArray();
+                return options.Assemblies;
             }
 
             return AppDomain.CurrentDomain.GetAssemblies();

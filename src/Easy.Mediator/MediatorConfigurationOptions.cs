@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 
@@ -7,20 +9,22 @@ namespace Easy.Mediator
 {
     public class MediatorConfigurationOptions
     {
-        public List<string> AssemblyNames { get; private set; }
         public List<Assembly> Assemblies { get; private set; }
         public ServiceLifetime ServiceLifetime { get; private set; }
 
         public MediatorConfigurationOptions()
         {
-            AssemblyNames = new List<string>();
             Assemblies = new List<Assembly>();
             ServiceLifetime = ServiceLifetime.Transient;
         }
 
         public MediatorConfigurationOptions AddAssembliesFrom(params string[] assembliesName)
         {
-            AssemblyNames.AddRange(assembliesName);
+            var assemblies = assembliesName
+                .Select(assemblyName => AppDomain.CurrentDomain.Load(assemblyName))
+                .ToList();
+
+            Assemblies.AddRange(assemblies);
 
             return this;
         }
