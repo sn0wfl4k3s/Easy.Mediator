@@ -88,4 +88,4 @@ This project is licensed under the MIT License.
 You are free to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the software, provided that you include the original copyright
 and license notice.
 
-See the [License.txt](LICENSE.txt) file for full details.
+See the [License.txt](https://github.com/sn0wfl4k3s/Easy.Mediator/blob/master/LICENSE.txt) file for full details.
