@@ -54,12 +54,14 @@ public class MediatorPipelineLoggingTests
         LoggingBehavior<PingCommand, PongResponse>.Executed = false;
 
         var command = new PingCommand("first");
+        Assert.False(LoggingBehavior<PingCommand, PongResponse>.Executed);
         await _mediator.Send(command);
         Assert.True(LoggingBehavior<PingCommand, PongResponse>.Executed);
 
         LoggingBehavior<PingCommand, PongResponse>.Executed = false;
 
         var command2 = new PingCommand("second");
+        Assert.False(LoggingBehavior<PingCommand, PongResponse>.Executed);
         await _mediator.Send(command2);
         Assert.True(LoggingBehavior<PingCommand, PongResponse>.Executed);
     }
