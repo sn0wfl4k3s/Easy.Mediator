@@ -1,5 +1,5 @@
-﻿using Easy.Mediator.UnitTests.Notifications;
-using Easy.Mediator.UnitTests.Requests;
+﻿using Easy.Mediator.UnitTests.Utils.Notifications;
+using Easy.Mediator.UnitTests.Utils.Requests;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Easy.Mediator.UnitTests;

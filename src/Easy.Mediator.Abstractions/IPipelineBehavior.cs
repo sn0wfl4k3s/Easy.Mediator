@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -5,8 +6,8 @@ using System.Threading.Tasks;
 namespace Easy.Mediator
 #pragma warning restore IDE0130 // Namespace does not match folder structure
 {
-    public interface INotificationHandler<TNotification> where TNotification : INotification
+    public interface IPipelineBehavior<TRequest, TResponse>
     {
-        Task Handle(TNotification notification, CancellationToken cancellationToken = default);
+        Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, Func<Task<TResponse>> next);
     }
 }

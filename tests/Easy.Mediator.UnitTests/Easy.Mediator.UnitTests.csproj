@@ -22,6 +22,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Easy.Mediator\Easy.Mediator.csproj" />
     <ProjectReference Include="..\..\src\Easy.Mediator.Abstractions\Easy.Mediator.Abstractions.csproj" />
+    <ProjectReference Include="..\Easy.Mediator.UnitTests.Utils\Easy.Mediator.UnitTests.Utils.csproj" />
   </ItemGroup>
 
 </Project>
