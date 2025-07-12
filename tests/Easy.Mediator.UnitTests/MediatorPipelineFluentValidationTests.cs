@@ -3,7 +3,6 @@ using Easy.Mediator.UnitTests.Utils.Requests;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace Easy.Mediator.UnitTests;
 
