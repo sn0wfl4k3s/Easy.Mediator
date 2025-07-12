@@ -10,6 +10,7 @@ public class UserCreateHandler : IRequestHandler<UserCreateCommand, string>
     public Task<string> Handle(UserCreateCommand request, CancellationToken cancellationToken)
     {
         WasCalled = true;
+
         return Task.FromResult("Created");
     }
 }

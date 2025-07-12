@@ -24,9 +24,10 @@ namespace Easy.Mediator
             var handlerType = typeof(IRequestHandler<,>).MakeGenericType(requestType, responseType);
             var handler = _serviceProvider.GetRequiredService(handlerType);
 
-            Func<Task<TResponse>> handlerDelegate = () =>
+            RequestHandlerDelegate<TResponse> handlerDelegate = (cancellationToken) =>
             {
                 var method = handlerType.GetMethod("Handle");
+
                 if (method == null)
                     throw new InvalidOperationException("Handler does not implement Handle method");
 
@@ -42,9 +43,10 @@ namespace Easy.Mediator
                 var method = behaviorInterfaceType.GetMethod("Handle");
 
                 var nextCopy = handlerDelegate;
-                handlerDelegate = () =>
+
+                handlerDelegate = (cancellationToken) =>
                 {
-                    return (Task<TResponse>)method!.Invoke(behavior, new object[] { request, cancellationToken, nextCopy })!;
+                    return (Task<TResponse>)method!.Invoke(behavior, new object[] { request, nextCopy, cancellationToken })!;
                 };
             }
 

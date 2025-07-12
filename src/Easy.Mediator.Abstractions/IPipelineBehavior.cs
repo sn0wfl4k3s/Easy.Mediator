@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 namespace Easy.Mediator
 #pragma warning restore IDE0130 // Namespace does not match folder structure
 {
+    public delegate Task<TResponse> RequestHandlerDelegate<TResponse>(CancellationToken t = default);
+
     public interface IPipelineBehavior<TRequest, TResponse>
     {
-        Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, Func<Task<TResponse>> next);
+        Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken);
     }
 }
