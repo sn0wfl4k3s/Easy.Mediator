@@ -1,4 +1,7 @@
-﻿namespace Easy.Mediator.UnitTests.Requests;
+﻿using System.Threading;
+using System.Threading.Tasks;
+
+namespace Easy.Mediator.UnitTests.Utils.Requests;
 
 public class PingCommandHandler : IRequestHandler<PingCommand, PongResponse>
 {

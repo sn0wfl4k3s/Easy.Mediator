@@ -9,13 +9,15 @@ namespace Easy.Mediator
 {
     public class MediatorConfigurationOptions
     {
-        public List<Assembly> Assemblies { get; private set; }
-        public ServiceLifetime ServiceLifetime { get; private set; }
+        internal List<Assembly> Assemblies { get; private set; }
+        internal List<Type> PipelineBehaviors { get; private set; }
+        internal ServiceLifetime ServiceLifetime { get; private set; }
 
         public MediatorConfigurationOptions()
         {
             Assemblies = new List<Assembly>();
             ServiceLifetime = ServiceLifetime.Transient;
+            PipelineBehaviors = new List<Type>();
         }
 
         public MediatorConfigurationOptions AddAssembliesFrom(params string[] assembliesName)
@@ -60,6 +62,13 @@ namespace Easy.Mediator
         public MediatorConfigurationOptions UseTransientServiceLifetime()
         {
             ServiceLifetime = ServiceLifetime.Transient;
+
+            return this;
+        }
+
+        public MediatorConfigurationOptions AddPipelineBehavior(Type openGenericType)
+        {
+            PipelineBehaviors.Add(openGenericType);
 
             return this;
         }

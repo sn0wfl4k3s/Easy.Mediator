@@ -1,4 +1,7 @@
-﻿namespace Easy.Mediator.UnitTests.Notifications;
+﻿using System.Threading;
+using System.Threading.Tasks;
+
+namespace Easy.Mediator.UnitTests.Utils.Notifications;
 
 public class TestNotificationHandler : INotificationHandler<TestNotification>
 {

@@ -16,9 +16,35 @@ namespace Easy.Mediator
 
             services.AddSingleton<IMediator, Mediator>();
 
+            services.RegisterPipelines(config);
+
             services.RegisterHandlersFromAssemblies(config);
 
             return services;
+
+        }
+
+        private static void RegisterPipelines(this IServiceCollection services, MediatorConfigurationOptions config)
+        {
+            foreach (var behavior in config.PipelineBehaviors)
+            {
+                if (behavior.IsGenericTypeDefinition)
+                {
+                    services.AddTransient(typeof(IPipelineBehavior<,>), behavior);
+                }
+                else
+                {
+                    var implementedInterface = behavior.GetInterfaces()
+                        .FirstOrDefault(i =>
+                            i.IsGenericType &&
+                            i.GetGenericTypeDefinition() == typeof(IPipelineBehavior<,>));
+
+                    if (implementedInterface != null)
+                    {
+                        services.AddTransient(implementedInterface, behavior);
+                    }
+                }
+            }
         }
 
         private static void RegisterHandlersFromAssemblies(this IServiceCollection services, MediatorConfigurationOptions options)
