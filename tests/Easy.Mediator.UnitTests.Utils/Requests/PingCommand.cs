@@ -1,3 +1,11 @@
 ﻿namespace Easy.Mediator.UnitTests.Utils.Requests;
 
-public record PingCommand(string Message) : IRequest<PongResponse>;
+public class PingCommand : IRequest<PongResponse>
+{
+    public string Message { get; }
+
+    public PingCommand(string message)
+    {
+        Message = message;
+    }
+}

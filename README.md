@@ -8,10 +8,11 @@
 
 - ✅ Supports **Requests/Responses** and **Notifications**
 - ⚙️ Automatic handler registration via **Dependency Injection**
-- 🔄 Compatible with **.NET Standard 2.1**, **.NET CORE** and **.NET 5+** or higher
+- 🔄 Compatible with **.NET Standard 2.1**, **.NET Core 2.1+** and **.NET 5+** or higher
 - 🔌 Seamless integration with `Microsoft.Extensions.DependencyInjection`
-- 📦 use-friendly  
+- 📦 Easy to use  
 - 🧩 NEW: Support for **Pipeline Behaviors** (interceptors like logging, validation, etc.)
+- 💎 **100% Compatible with C# Records** (C# 9+) even though library is C# 7.3
 
 ---
 
@@ -30,8 +31,17 @@ dotnet add package Easy.Mediator
 #### 1. Define a notification
 
 ```csharp
-public record NewUserNotification(string UserName, string Message) : INotification;
+public class NewUserNotification : INotification
+{
+    public string UserName { get; }
+    public string Message { get; }
 
+    public NewUserNotification(string userName, string message)
+    {
+        UserName = userName;
+        Message = message;
+    }
+}
 ```
 #### 2. Implement a notification handler
 ```csharp
@@ -62,9 +72,17 @@ await mediator.Publish(new NewUserNotification("Bob", "Bem-vindo!"));
 
 #### 1. Define a request and its response
 ```csharp
-public record PingCommand(string Message) : IRequest<PongResponse>;
+public class PingCommand : IRequest<PongResponse>
+{
+    public string Message { get; }
+    public PingCommand(string message) => Message = message;
+}
 
-public record PongResponse(string Message);
+public class PongResponse
+{
+    public string Message { get; }
+    public PongResponse(string message) => Message = message;
+}
 ```
 #### 2. Implement a request handler
 ```csharp
@@ -163,3 +181,45 @@ You are free to use, copy, modify, merge, publish, distribute, sublicense, and/o
 and license notice.
 
 See the [License.txt](https://github.com/sn0wfl4k3s/Easy.Mediator/blob/master/LICENSE.txt) file for full details.
+
+---
+
+## 💎 C# Records Support
+
+Easy.Mediator is **100% compatible with C# Records**! Even though the library is compiled with C# 7.3 for maximum compatibility, your projects can freely use C# 9+ Records.
+
+### Using Records with Easy.Mediator
+
+```csharp
+// ✅ Your project can use C# 9+ Records
+public record CreateOrderCommand(string OrderId, string ProductName) : IRequest<OrderResponse>;
+
+public record OrderResponse(string OrderId, string ProductName, string ConfirmationId);
+
+public record OrderCreatedNotification(string OrderId, string ProductName) : INotification;
+
+// Handlers work seamlessly with records
+public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, OrderResponse>
+{
+    public Task<OrderResponse> Handle(CreateOrderCommand request, CancellationToken ct)
+    {
+        var response = new OrderResponse(
+            request.OrderId,
+            request.ProductName,
+            Guid.NewGuid().ToString()
+        );
+        return Task.FromResult(response);
+    }
+}
+```
+
+### Compatibility Matrix
+
+| Your Project | C# Version | .NET Target | Easy.Mediator | Status |
+|--------------|-----------|------------|---------------|--------|
+| Legacy | C# 7.3 | .NET Framework 4.7.2+ | ✅ Works |
+| Modern | C# 8.0 | .NET Core 3.0+ | ✅ Works |
+| Latest | C# 9.0+ | .NET 5.0+ | ✅ Works + Records |
+
+Easy.Mediator is compiled for C# 7.3 and .NET Standard 2.1, ensuring maximum compatibility across all .NET versions and C# versions. Your code is free to use any newer features! 🎉
+

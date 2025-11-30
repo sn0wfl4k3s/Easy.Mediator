@@ -1,9 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Easy.Mediator
 {
@@ -16,8 +15,8 @@ namespace Easy.Mediator
         public MediatorConfigurationOptions()
         {
             Assemblies = new List<Assembly>();
-            ServiceLifetime = ServiceLifetime.Transient;
             PipelineBehaviors = new List<Type>();
+            ServiceLifetime = ServiceLifetime.Transient;
         }
 
         public MediatorConfigurationOptions AddAssembliesFrom(params string[] assembliesName)
