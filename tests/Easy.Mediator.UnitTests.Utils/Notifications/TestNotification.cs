@@ -1,3 +1,11 @@
 ﻿namespace Easy.Mediator.UnitTests.Utils.Notifications;
 
-public record TestNotification(string Content) : INotification;
+public class TestNotification : INotification
+{
+    public string Content { get; }
+
+    public TestNotification(string content)
+    {
+        Content = content;
+    }
+}
