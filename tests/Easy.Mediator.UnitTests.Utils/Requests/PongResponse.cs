@@ -1,3 +1,11 @@
 ﻿namespace Easy.Mediator.UnitTests.Utils.Requests;
 
-public record PongResponse(string Message);
+public class PongResponse
+{
+    public string Message { get; }
+
+    public PongResponse(string message)
+    {
+        Message = message;
+    }
+}

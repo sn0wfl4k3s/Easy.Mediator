@@ -1,8 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Easy.Mediator
 {
@@ -14,45 +14,116 @@ namespace Easy.Mediator
 
             configureOptions?.Invoke(config);
 
-            services.AddSingleton<IMediator, Mediator>();
+            // Register Mediator as singleton
+            services.AddSingleton<IMediator>(provider => new Mediator(provider));
 
-            services.RegisterPipelines(config);
-
-            services.RegisterHandlersFromAssemblies(config);
+            // Register handlers and behaviors with configured lifetime
+            RegisterHandlersFromAssemblies(services, config);
+            RegisterPipelines(services, config);
 
             return services;
-
         }
 
-        private static void RegisterPipelines(this IServiceCollection services, MediatorConfigurationOptions config)
+        private static void RegisterPipelines(IServiceCollection services, MediatorConfigurationOptions config)
         {
-            foreach (var behavior in config.PipelineBehaviors)
+            foreach (var behaviorType in config.PipelineBehaviors)
             {
-                if (behavior.IsGenericTypeDefinition)
+                if (!behaviorType.IsGenericTypeDefinition)
                 {
-                    services.AddTransient(typeof(IPipelineBehavior<,>), behavior);
+                    // Non-generic behavior
+                    var implementedInterfaces = behaviorType.GetInterfaces()
+                        .Where(i =>
+                            i.IsGenericType &&
+                            i.GetGenericTypeDefinition() == typeof(IPipelineBehavior<,>))
+                        .ToList();
+
+                    foreach (var interfaceType in implementedInterfaces)
+                    {
+                        // Register behavior in DI container
+                        switch (config.ServiceLifetime)
+                        {
+                            case ServiceLifetime.Transient:
+                                services.AddTransient(interfaceType, behaviorType);
+                                break;
+                            case ServiceLifetime.Scoped:
+                                services.AddScoped(interfaceType, behaviorType);
+                                break;
+                            case ServiceLifetime.Singleton:
+                                services.AddSingleton(interfaceType, behaviorType);
+                                break;
+                        }
+
+                        var genericArgs = interfaceType.GetGenericArguments();
+                        var requestType = genericArgs[0];
+                        var responseType = genericArgs[1];
+
+                        var method = typeof(Mediator).GetMethod(nameof(Mediator.RegisterPipelineBehavior));
+                        var genericMethod = method?.MakeGenericMethod(requestType, responseType);
+                        genericMethod?.Invoke(null, new object[] { behaviorType });
+                    }
                 }
                 else
                 {
-                    var implementedInterface = behavior.GetInterfaces()
-                        .FirstOrDefault(i =>
-                            i.IsGenericType &&
-                            i.GetGenericTypeDefinition() == typeof(IPipelineBehavior<,>));
+                    // Generic behavior - register for all matching request types
+                    var requestHandlerInterfaceType = typeof(IRequestHandler<,>);
+                    var assemblies = GetAssemblies(config);
 
-                    if (implementedInterface != null)
+                    var requestTypes = assemblies
+                        .SelectMany(x => x.GetTypes())
+                        .Where(t => !t.IsAbstract && !t.IsInterface)
+                        .SelectMany(t => t.GetInterfaces()
+                            .Where(i => i.IsGenericType &&
+                                i.GetGenericTypeDefinition() == requestHandlerInterfaceType)
+                            .Select(i => new
+                            {
+                                RequestType = i.GetGenericArguments()[0],
+                                ResponseType = i.GetGenericArguments()[1]
+                            }))
+                        .ToList();
+
+                    // Remove duplicates
+                    var uniqueRequestTypes = new List<(Type, Type)>();
+                    foreach (var item in requestTypes)
                     {
-                        services.AddTransient(implementedInterface, behavior);
+                        var tuple = (item.RequestType, item.ResponseType);
+                        if (!uniqueRequestTypes.Any(x => x.Item1 == tuple.Item1 && x.Item2 == tuple.Item2))
+                        {
+                            uniqueRequestTypes.Add(tuple);
+                        }
+                    }
+
+                    foreach (var (requestType, responseType) in uniqueRequestTypes)
+                    {
+                        var genericBehaviorInterfaceType = typeof(IPipelineBehavior<,>).MakeGenericType(requestType, responseType);
+                        var concreteBehaviorType = behaviorType.MakeGenericType(requestType, responseType);
+
+                        // Register concrete generic behavior in DI container
+                        switch (config.ServiceLifetime)
+                        {
+                            case ServiceLifetime.Transient:
+                                services.AddTransient(genericBehaviorInterfaceType, concreteBehaviorType);
+                                break;
+                            case ServiceLifetime.Scoped:
+                                services.AddScoped(genericBehaviorInterfaceType, concreteBehaviorType);
+                                break;
+                            case ServiceLifetime.Singleton:
+                                services.AddSingleton(genericBehaviorInterfaceType, concreteBehaviorType);
+                                break;
+                        }
+
+                        var method = typeof(Mediator).GetMethod(nameof(Mediator.RegisterPipelineBehavior));
+                        var genericMethod = method?.MakeGenericMethod(requestType, responseType);
+                        genericMethod?.Invoke(null, new object[] { behaviorType });
                     }
                 }
             }
         }
 
-        private static void RegisterHandlersFromAssemblies(this IServiceCollection services, MediatorConfigurationOptions options)
+        private static void RegisterHandlersFromAssemblies(IServiceCollection services, MediatorConfigurationOptions options)
         {
             var assemblies = GetAssemblies(options);
 
             var requestHandlerInterfaceType = typeof(IRequestHandler<,>);
-
             var notificationHandlerInterfaceType = typeof(INotificationHandler<>);
 
             var handlerTypes = assemblies
@@ -65,20 +136,51 @@ namespace Easy.Mediator
                     .Select(i => new { HandlerType = t, InterfaceType = i }))
                 .ToList();
 
-            switch (options.ServiceLifetime)
+            foreach (var item in handlerTypes)
             {
-                case ServiceLifetime.Transient:
-                    foreach (var handler in handlerTypes)
-                        services.AddTransient(handler.InterfaceType, handler.HandlerType);
-                    break;
-                case ServiceLifetime.Scoped:
-                    foreach (var handler in handlerTypes)
-                        services.AddScoped(handler.InterfaceType, handler.HandlerType);
-                    break;
-                default:
-                    foreach (var handler in handlerTypes)
-                        services.AddSingleton(handler.InterfaceType, handler.HandlerType);
-                    break;
+                var interfaceType = item.InterfaceType;
+
+                // Register handler in DI container with configured lifetime
+                switch (options.ServiceLifetime)
+                {
+                    case ServiceLifetime.Transient:
+                        services.AddTransient(interfaceType, item.HandlerType);
+                        break;
+                    case ServiceLifetime.Scoped:
+                        services.AddScoped(interfaceType, item.HandlerType);
+                        break;
+                    case ServiceLifetime.Singleton:
+                        services.AddSingleton(interfaceType, item.HandlerType);
+                        break;
+                }
+
+                if (interfaceType.GetGenericTypeDefinition() == requestHandlerInterfaceType)
+                {
+                    var genericArgs = interfaceType.GetGenericArguments();
+                    var requestType = genericArgs[0];
+                    var responseType = genericArgs[1];
+
+                    // Register only the type, not an instance
+                    var method = typeof(Mediator).GetMethod(nameof(Mediator.RegisterRequestHandler));
+                    var genericMethod = method?.MakeGenericMethod(requestType, responseType);
+                    
+                    // Create a factory function that will resolve from DI later
+                    var handlerFactory = (object)Activator.CreateInstance(item.HandlerType)!;
+                    genericMethod?.Invoke(null, new object[] { handlerFactory });
+                }
+                else if (interfaceType.GetGenericTypeDefinition() == notificationHandlerInterfaceType)
+                {
+                    var genericArgs = interfaceType.GetGenericArguments();
+                    var notificationType = genericArgs[0];
+
+                    // Register only the type, not an instance
+                    var method = typeof(Mediator).GetMethod(nameof(Mediator.RegisterNotificationHandler));
+                    var genericMethod = method?.MakeGenericMethod(notificationType);
+                    
+                    // Create a factory function that will resolve from DI later
+                    var handlerFactory = (object)Activator.CreateInstance(item.HandlerType)!;
+                    genericMethod?.Invoke(null, new object[] { handlerFactory });
+                }
             }
         }
 
@@ -93,4 +195,5 @@ namespace Easy.Mediator
         }
     }
 }
+
 

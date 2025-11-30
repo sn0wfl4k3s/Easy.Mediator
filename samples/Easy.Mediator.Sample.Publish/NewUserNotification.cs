@@ -1,3 +1,13 @@
 ﻿namespace Easy.Mediator.Sample.Publish;
 
-public record NewUserNotification(string UserName, string Message) : INotification;
+public class NewUserNotification : INotification
+{
+    public string UserName { get; }
+    public string Message { get; }
+
+    public NewUserNotification(string userName, string message)
+    {
+        UserName = userName;
+        Message = message;
+    }
+}

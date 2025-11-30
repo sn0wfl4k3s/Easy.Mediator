@@ -1,3 +1,11 @@
 ﻿namespace Easy.Mediator.Sample.Send;
 
-public record PongResponse(string Message);
+public class PongResponse
+{
+    public string Message { get; }
+
+    public PongResponse(string message)
+    {
+        Message = message;
+    }
+}
