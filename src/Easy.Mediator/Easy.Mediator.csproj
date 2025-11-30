@@ -7,17 +7,57 @@
 	  <PackageId>Easy.Mediator</PackageId>
 	  <Authors>Snowflakes</Authors>
 	  <Product>Easy.Mediator</Product>
-	  <Description>A simple implementation of mediator pattern</Description>
+	  <Description>A lightweight, extensible Mediator pattern implementation for .NET with Pipeline Behaviors support. Features automatic handler discovery, dependency injection integration, request/response pattern, publish/subscribe notifications, and comprehensive audit trail support. Compatible with C# 7.3+ and .NET Standard 2.1+.</Description>
 	  <RepositoryUrl>https://github.com/sn0wfl4k3s/Easy.Mediator</RepositoryUrl>
-	  <PackageTags>mediator;csharp;mediatR;design;pattern;dotnet</PackageTags>
-	  <AssemblyVersion>2.0.0.0</AssemblyVersion>
-	  <FileVersion>2.0.0.0</FileVersion>
-	  <Version>2.0.0</Version>
+	  <PackageTags>mediator;csharp;mediatR;design;design-pattern;dotnet;mediator-pattern;request-response;publish-subscribe;pipeline-behaviors;dependency-injection;di</PackageTags>
+	  <AssemblyVersion>2.1.0.0</AssemblyVersion>
+	  <FileVersion>2.1.0.0</FileVersion>
+	  <Version>2.1.0</Version>
 	  <Title>Easy.Mediator</Title>
 	  <PackageReadmeFile>README.md</PackageReadmeFile>
 	  <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
 	  <PackageIcon>icon.png</PackageIcon>
-	  <PackageReleaseNotes>- 🧩 NEW: Support for **Pipeline Behaviors** (interceptors like logging, validation, etc.)</PackageReleaseNotes>
+	  <PackageReleaseNotes>
+## v2.1.0 - Enhanced Architecture &amp; Stability Release
+
+### ✨ New Features
+- **Named Tuples** - Improved code readability with semantic field names (RequestType, Handler, BehaviorType) replacing Item1/Item2
+- **C# Records Support** - 100% compatible with C# 9+ Records while maintaining C# 7.3 minimum compatibility
+- **Error Handling Tests** - New comprehensive error handling test suite for missing handlers
+- **Better Type Safety** - Explicit tuple naming reduces bugs and improves maintainability
+
+### 🔧 Technical Improvements
+- **Thread-Safe Architecture** - Switched from Channels to thread-safe Collections for better mutation control
+- **No Race Conditions** - IServiceProvider moved to instance-level (not static) eliminating concurrency issues
+- **31 Unit Tests** - Complete test coverage including error scenarios, records, and pipeline behaviors
+- **Performance Optimized** - HashSet for behavior registry ensures O(1) duplicate prevention
+
+### 🎯 Architecture Highlights
+- ✅ List&lt;T&gt; + Lock-based handler registries (thread-safe mutations)
+- ✅ HashSet&lt;T&gt; for pipeline behaviors (automatic duplicate prevention)
+- ✅ Channels reserved for audit trail (immutable streaming)
+- ✅ Instance-level IServiceProvider (no static state conflicts)
+
+### 📦 Compatibility &amp; Quality
+- **C# Versions**: 7.3 minimum (13.0+ fully supported)
+- **Frameworks**: .NET Framework 4.7.2+, .NET Core 2.1+, .NET 5.0-9.0+
+- **Code Quality**: 100% test coverage for Mediator core
+- **Documentation**: Records compatibility guide, implementation summary, enhanced README
+
+### 🐛 Bug Fixes &amp; Improvements
+- Fixed static service provider race conditions causing flaky tests
+- Improved error messages with explicit request type names
+- Better duplicate behavior prevention with HashSet
+- Cleaner code with named tuple unpacking
+
+### Previous Features (v2.0.0)
+- 🧩 Pipeline Behaviors (interceptors)
+- 🔄 Request/Response pattern with generic handlers
+- 🔔 Publish/Subscribe notifications with parallel execution
+- 🎯 Automatic handler discovery via reflection
+- 💉 Seamless Dependency Injection integration
+- 📊 Audit trail support via Channels
+	  </PackageReleaseNotes>
 	  
   </PropertyGroup>
 
