@@ -10,9 +10,9 @@ namespace Easy.Mediator
 {
     public class Mediator : IMediator
     {
-        private static readonly List<(Type, object)> RequestHandlerRegistry = new List<(Type, object)>();
-        private static readonly List<(Type, object)> NotificationHandlerRegistry = new List<(Type, object)>();
-        private static readonly HashSet<(Type, Type)> PipelineBehaviorRegistry = new HashSet<(Type, Type)>();
+        private static readonly List<(Type RequestType, object Handler)> RequestHandlerRegistry = new List<(Type, object)>();
+        private static readonly List<(Type NotificationType, object Handler)> NotificationHandlerRegistry = new List<(Type, object)>();
+        private static readonly HashSet<(Type RequestType, Type BehaviorType)> PipelineBehaviorRegistry = new HashSet<(Type, Type)>();
         private static readonly Channel<object> RequestAuditChannel = Channel.CreateUnbounded<object>();
         private static readonly Channel<object> NotificationAuditChannel = Channel.CreateUnbounded<object>();
         private static readonly object RegistryLock = new object();
@@ -28,7 +28,7 @@ namespace Easy.Mediator
             where TRequest : IRequest<TResponse>
         {
             var key = typeof(TRequest);
-            var message = (key, (object)handler);
+            var message = (RequestType: key, Handler: (object)handler);
             lock (RegistryLock)
             {
                 RequestHandlerRegistry.Add(message);
@@ -39,7 +39,7 @@ namespace Easy.Mediator
             where TNotification : INotification
         {
             var key = typeof(TNotification);
-            var message = (key, (object)handler);
+            var message = (NotificationType: key, Handler: (object)handler);
             lock (RegistryLock)
             {
                 NotificationHandlerRegistry.Add(message);
@@ -50,7 +50,7 @@ namespace Easy.Mediator
             where TRequest : IRequest<TResponse>
         {
             var key = typeof(TRequest);
-            var behaviorKey = (key, behaviorType);
+            var behaviorKey = (RequestType: key, BehaviorType: behaviorType);
             
             lock (RegistryLock)
             {
@@ -80,12 +80,12 @@ namespace Easy.Mediator
         {
             lock (RegistryLock)
             {
-                var handler = RequestHandlerRegistry.LastOrDefault(r => r.Item1 == requestType);
+                var (RequestType, Handler) = RequestHandlerRegistry.LastOrDefault(r => r.RequestType == requestType);
                 
-                if (handler.Item2 == null)
+                if (Handler == null)
                     throw new InvalidOperationException($"No handler registered for request type {requestType.Name}");
 
-                return handler.Item2;
+                return Handler;
             }
         }
 
@@ -94,9 +94,9 @@ namespace Easy.Mediator
             lock (RegistryLock)
             {
                 var handlers = new List<object>();
-                foreach (var (type, handler) in NotificationHandlerRegistry)
+                foreach (var (notificationTypeKey, handler) in NotificationHandlerRegistry)
                 {
-                    if (type == notificationType)
+                    if (notificationTypeKey == notificationType)
                     {
                         handlers.Add(handler);
                     }
@@ -111,9 +111,9 @@ namespace Easy.Mediator
             
             lock (RegistryLock)
             {
-                foreach (var (type, behaviorType) in PipelineBehaviorRegistry)
+                foreach (var (requestTypeKey, behaviorType) in PipelineBehaviorRegistry)
                 {
-                    if (type == requestType)
+                    if (requestTypeKey == requestType)
                     {
                         behaviors.Add(behaviorType);
                     }
@@ -133,10 +133,7 @@ namespace Easy.Mediator
 
             RequestHandlerDelegate<TResponse> handlerDelegate = (ct) =>
             {
-                var method = handlerType.GetMethod("Handle");
-                if (method == null)
-                    throw new InvalidOperationException("Handler does not implement Handle method");
-
+                var method = handlerType.GetMethod("Handle") ?? throw new InvalidOperationException("Handler does not implement Handle method");
                 return (Task<TResponse>)method.Invoke(handlerObj, new object[] { request, ct })!;
             };
 
