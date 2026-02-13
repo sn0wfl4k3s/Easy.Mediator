@@ -10,14 +10,28 @@
 	  <Description>A lightweight, extensible Mediator pattern implementation for .NET with Pipeline Behaviors support. Features automatic handler discovery, dependency injection integration, request/response pattern, publish/subscribe notifications, and comprehensive audit trail support. Compatible with C# 7.3+ and .NET Standard 2.1+.</Description>
 	  <RepositoryUrl>https://github.com/sn0wfl4k3s/Easy.Mediator</RepositoryUrl>
 	  <PackageTags>mediator;csharp;mediatR;design;design-pattern;dotnet;mediator-pattern;request-response;publish-subscribe;pipeline-behaviors;dependency-injection;di</PackageTags>
-	  <AssemblyVersion>2.1.0.0</AssemblyVersion>
-	  <FileVersion>2.1.0.0</FileVersion>
-	  <Version>2.1.0</Version>
+	  <AssemblyVersion>2.2.0.0</AssemblyVersion>
+	  <FileVersion>2.2.0.0</FileVersion>
+	  <Version>2.2.0</Version>
 	  <Title>Easy.Mediator</Title>
 	  <PackageReadmeFile>README.md</PackageReadmeFile>
 	  <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
 	  <PackageIcon>icon.png</PackageIcon>
 	  <PackageReleaseNotes>
+## v2.2.0 - Bounded Channel Capacity
+
+### ✨ New Features
+- **Bounded Channel Capacity** - Optional `SetChannelCapacity(int)` to limit audit trail memory usage
+- **DropOldest Strategy** - When the channel is full, the oldest audit item is automatically discarded (never blocks Send/Publish)
+- **Fluent Configuration** - Chain `.SetChannelCapacity(n)` alongside existing options
+- **Full Backward Compatibility** - Default behavior remains unbounded; no changes required for existing consumers
+
+### 🧪 Tests
+- 12 new unit tests covering bounded channel configuration, validation, Send, Publish, and various capacities
+- 43 total tests passing
+
+---
+
 ## v2.1.0 - Enhanced Architecture &amp; Stability Release
 
 ### ✨ New Features
