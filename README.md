@@ -11,8 +11,9 @@
 - 🔄 Compatible with **.NET Standard 2.1**, **.NET Core 2.1+** and **.NET 5+** or higher
 - 🔌 Seamless integration with `Microsoft.Extensions.DependencyInjection`
 - 📦 Easy to use  
-- 🧩 NEW: Support for **Pipeline Behaviors** (interceptors like logging, validation, etc.)
+- 🧩 Support for **Pipeline Behaviors** (interceptors like logging, validation, etc.)
 - 💎 **100% Compatible with C# Records** (C# 9+) even though library is C# 7.3
+- 📊 NEW: **Bounded Channel Capacity** for audit trail — control memory usage with optional channel size limits
 
 ---
 
@@ -173,6 +174,47 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
     }
 }
 ```
+
+## 📊 Bounded Channel Capacity (Optional)
+
+By default, Easy.Mediator uses **unbounded channels** for its audit trail — meaning audit data grows without limit as long as the application runs. Starting with **v2.2.0**, you can optionally set a **bounded capacity** to control how many audit items are kept in memory.
+
+### Why use bounded channels?
+
+| Benefit | Description |
+|---|---|
+| **Memory control** | Prevents the audit channel from growing indefinitely in long-running applications |
+| **Predictable resource usage** | You define the exact maximum number of items held in memory |
+| **Safe by default** | When the channel is full, the oldest items are automatically dropped (no blocking, no exceptions) |
+| **Zero impact if unused** | If you don't call `SetChannelCapacity`, everything works exactly as before (unbounded) |
+
+### Usage
+
+Just chain `.SetChannelCapacity(n)` in your configuration:
+
+```csharp
+services.AddEasyMediator(options =>
+{
+    options.SetChannelCapacity(100); // keeps the last 100 audit items
+});
+```
+
+Without it, the default behavior is unchanged:
+
+```csharp
+// Unbounded (default) — same as previous versions
+services.AddEasyMediator();
+```
+
+### How it works
+
+- When a capacity is set, the audit channels are created with `Channel.CreateBounded<T>` using `BoundedChannelFullMode.DropOldest`.
+- This means `Send` and `Publish` **never block** — if the channel is full, the oldest audit entry is silently discarded to make room for the new one.
+- When no capacity is set, channels remain `Channel.CreateUnbounded<T>` — identical to previous versions.
+
+> ⚠️ Capacity must be greater than zero. Passing `0` or a negative value throws an `ArgumentOutOfRangeException`.
+
+---
 
 ## 📃 License
 This project is licensed under the MIT License.

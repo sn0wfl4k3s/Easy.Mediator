@@ -14,6 +14,12 @@ namespace Easy.Mediator
 
             configureOptions?.Invoke(config);
 
+            // Configure channel capacity if specified
+            if (config.ChannelCapacity.HasValue)
+            {
+                Mediator.ConfigureChannelCapacity(config.ChannelCapacity);
+            }
+
             // Register Mediator as singleton
             services.AddSingleton<IMediator>(provider => new Mediator(provider));
 
