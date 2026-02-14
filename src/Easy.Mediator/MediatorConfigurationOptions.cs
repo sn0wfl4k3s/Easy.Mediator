@@ -11,12 +11,14 @@ namespace Easy.Mediator
         internal List<Assembly> Assemblies { get; private set; }
         internal List<Type> PipelineBehaviors { get; private set; }
         internal ServiceLifetime ServiceLifetime { get; private set; }
+        internal int? ChannelCapacity { get; private set; }
 
         public MediatorConfigurationOptions()
         {
             Assemblies = new List<Assembly>();
             PipelineBehaviors = new List<Type>();
             ServiceLifetime = ServiceLifetime.Transient;
+            ChannelCapacity = null;
         }
 
         public MediatorConfigurationOptions AddAssembliesFrom(params string[] assembliesName)
@@ -68,6 +70,16 @@ namespace Easy.Mediator
         public MediatorConfigurationOptions AddPipelineBehavior(Type openGenericType)
         {
             PipelineBehaviors.Add(openGenericType);
+
+            return this;
+        }
+
+        public MediatorConfigurationOptions SetChannelCapacity(int capacity)
+        {
+            if (capacity <= 0)
+                throw new ArgumentOutOfRangeException(nameof(capacity), capacity, "Channel capacity must be greater than zero.");
+
+            ChannelCapacity = capacity;
 
             return this;
         }

@@ -13,8 +13,8 @@ namespace Easy.Mediator
         private static readonly List<(Type RequestType, object Handler)> RequestHandlerRegistry = new List<(Type, object)>();
         private static readonly List<(Type NotificationType, object Handler)> NotificationHandlerRegistry = new List<(Type, object)>();
         private static readonly HashSet<(Type RequestType, Type BehaviorType)> PipelineBehaviorRegistry = new HashSet<(Type, Type)>();
-        private static readonly Channel<object> RequestAuditChannel = Channel.CreateUnbounded<object>();
-        private static readonly Channel<object> NotificationAuditChannel = Channel.CreateUnbounded<object>();
+        private static Channel<object> RequestAuditChannel = Channel.CreateUnbounded<object>();
+        private static Channel<object> NotificationAuditChannel = Channel.CreateUnbounded<object>();
         private static readonly object RegistryLock = new object();
 
         private readonly IServiceProvider? _serviceProvider;
@@ -22,6 +22,31 @@ namespace Easy.Mediator
         public Mediator(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
+        }
+
+        /// <summary>
+        /// Configures the audit channel capacity. Pass null to use unbounded channels (default).
+        /// This method should be called once at application startup, before any Send/Publish calls.
+        /// </summary>
+        public static void ConfigureChannelCapacity(int? capacity)
+        {
+            if (capacity.HasValue && capacity.Value <= 0)
+                throw new ArgumentOutOfRangeException(nameof(capacity), capacity.Value, "Channel capacity must be greater than zero.");
+
+            if (capacity.HasValue)
+            {
+                var options = new BoundedChannelOptions(capacity.Value)
+                {
+                    FullMode = BoundedChannelFullMode.DropOldest
+                };
+                RequestAuditChannel = Channel.CreateBounded<object>(options);
+                NotificationAuditChannel = Channel.CreateBounded<object>(options);
+            }
+            else
+            {
+                RequestAuditChannel = Channel.CreateUnbounded<object>();
+                NotificationAuditChannel = Channel.CreateUnbounded<object>();
+            }
         }
 
         public static void RegisterRequestHandler<TRequest, TResponse>(IRequestHandler<TRequest, TResponse> handler)
